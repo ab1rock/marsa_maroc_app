@@ -1,0 +1,146 @@
+<div class="grid">
+    <div class="col-12 lg:col-6 xl:col-3">
+        <p-toast></p-toast>
+
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Containers</span>
+                    <div class="text-900 font-medium text-xl">{{containersCount}}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-box text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"> </span>
+            <span class="text-500"></span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Valid Containers</span>
+                    <div class="text-900 font-medium text-xl">{{containersAboveThresholdCount}}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-green-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-check text-green-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"></span>
+            <span class="text-500"></span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Not Verified </span>
+                    <div class="text-900 font-medium text-xl">{{containersUnderThresholdCount}}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-red-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-clock text-red-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">  </span>
+            <span class="text-500"></span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Comments</span>
+                    <div class="text-900 font-medium text-xl">0</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-purple-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-comment text-purple-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"> </span>
+            <span class="text-500"></span>
+        </div>
+    </div>
+
+    <div class="col-12 xl:col-6">
+        <div class="card">
+            <h5>Upload Images</h5>
+            <form (ngSubmit)="onUpload()">
+                <div class="mb-3">
+                    <label for="fileInput" class="block text-500 font-medium mb-2">Select Image:</label>
+                    <input type="file" id="fileInput" (change)="onFileSelected($event)"  class="block w-full">
+                </div>
+                <button type="submit" class="p-button p-component">
+                    <span class="p-button-label">Upload</span>
+                </button>
+            </form>
+        </div>
+    </div>
+   
+    <div class="col-12 xl:col-6">
+        <div class="card">
+          <h5>Detected Image Information</h5>
+          <div class="info-section">
+            <span class="block text-500 font-medium mb-3">Container Code:</span>
+            <div class="text-900 font-medium text-xl">{{containerData?.code}}</div>
+          </div>
+          <div class="info-section">
+            <span class="block text-500 font-medium mb-3">Date Detected:</span>
+            <div class="text-900 font-medium text-xl">{{ containerData?.date_time}}</div>
+          </div>
+          <div class="info-section">
+            <span class="block text-500 font-medium mb-3">Image:</span>
+            <div class="image-container">
+              <img *ngIf="containerData?.image_output" [src]="'http://127.0.0.1:8000/media/uploads/' + containerData.image_output" alt="Annotated Image" class="img-fluid" />
+            </div>
+          </div>
+          <div class="info-section">
+            <span class="block text-500 font-medium mb-3">Dectection Threshold:</span>
+            <div class="text-900 font-medium text-xl">{{containerData?.detection_threshold}}</div>
+          </div>
+        </div>
+      </div>
+      
+    
+
+
+   
+<div class="col-12 xl:col-6">
+    <div class="card">
+        <h5>Webcam Footage</h5>
+       
+         <video id="webcam" width="70%" height="auto" src="http://127.0.0.1:8000/api/stream_video/" autoplay controls></video>
+      
+
+     
+    </div>
+
+
+ 
+</div>
+<div class="col-12 xl:col-6">
+    <div class="card">
+      <h5>Detected Video Information</h5>
+      <div class="info-section">
+        <span class="block text-500 font-medium mb-3">Container Code:</span>
+        <div class="text-900 font-medium text-xl">{{containerVideoData?.code}}</div>
+      </div>
+      <div class="info-section">
+        <span class="block text-500 font-medium mb-3">Date Detected:</span>
+        <div class="text-900 font-medium text-xl">{{ containerVideoData?.date_time}}</div>
+      </div>
+      <div class="info-section">
+        <span class="block text-500 font-medium mb-3">Image:</span>
+        <div class="image-container">
+          <img *ngIf="containerVideoData?.image_output" [src]="'http://127.0.0.1:8000/media/uploads/' + containerData.image_output" alt="Annotated Image" class="img-fluid" />
+        </div>
+      </div>
+      <div class="info-section">
+        <span class="block text-500 font-medium mb-3">Dectection Threshold:</span>
+        <div class="text-900 font-medium text-xl">{{containerVideoData?.detection_threshold}}</div>
+      </div>
+    </div>
+  </div>
+  
+
+</div>

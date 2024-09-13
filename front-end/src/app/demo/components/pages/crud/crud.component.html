@@ -1,0 +1,144 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <p-breadcrumb 
+                class="max-w-full" 
+                [model]="items" 
+                [home]="home" />
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                    
+                    </div>
+                </ng-template>
+ 
+                <ng-template pTemplate="right">
+              
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedContainers()" [disabled]="!selectedContainers || !selectedContainers.length"></button>
+                       
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="containers" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['code','date_time','image_path','detection_threshold']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedContainers" selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Manage Containers</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="ID">ID<p-sortIcon field="ID"></p-sortIcon></th>
+                        <th pSortableColumn="container_code">Container Code <p-sortIcon field="container_code"></p-sortIcon></th>
+                        <th pSortableColumn="date_time">Date Time <p-sortIcon field="date_time"></p-sortIcon></th>
+                        <th pSortableColumn="Image">Input Image <p-sortIcon field="Image"></p-sortIcon></th>
+                        <th pSortableColumn="Image">Output Image <p-sortIcon field="Image"></p-sortIcon></th>
+                        <th pSortableColumn="detection_threshold">Detection Threshold <p-sortIcon field="detection_threshold"></p-sortIcon></th>
+                        <th pSortableColumn="Status">Status <p-sortIcon field="Status"></p-sortIcon></th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-container>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="container"></p-tableCheckbox>
+                        </td>
+                        <td>
+                            <span class="p-column-title">Container ID</span>
+                            {{container.id}}
+                        </td>
+                        <td>
+                            <span class="p-column-title">ContainerCode</span>
+                            {{container.code}}
+                        </td>
+                        <td>
+                            <span class="p-column-title">Date Time</span>
+                            {{container.date_time}}
+                        </td>
+                        <td>
+                            <span class="p-column-title">Input Image</span>
+                            <img 
+                            [src]="'http://127.0.0.1:8000/'+ container.image_input" 
+                            [alt]="nothing" 
+                            width="100" 
+                            class="shadow-4"
+                            (click)="showImage('http://127.0.0.1:8000/' + container.image_input)">
+                           
+                        </td>
+                        <td>
+                            <span class="p-column-title">Output Image</span>
+                            <img 
+                            [src]="'http://127.0.0.1:8000/'+ container.image_output" 
+                            [alt]="nothing" 
+                            width="100" 
+                            class="shadow-4"
+                            (click)="showImage('http://127.0.0.1:8000/' + container.image_output)">
+                           
+                        </td>
+                        <td>
+                            <span class="p-column-title">Detection Threshold</span>
+                            {{container.detection_threshold}}
+                        </td>
+                        <td>
+                           <p-tag severity="{{getStatusClass(container.detection_threshold)}}" value="{{getStatus(container.detection_threshold)}}"/>
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button  pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editContainer(container)" [disabled]="isDisabled(container.detection_threshold)" ></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteContainer(container)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-dialog header="Image en grand format" [(visible)]="displayDialog" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="true">
+                <img [src]="selectedImage" alt="Selected Image" style="width: 100%; height: auto;">
+            </p-dialog>
+        </div>
+
+        <p-dialog [(visible)]="containerDialog" [style]="{width: '450px'}" header="Container Details" [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <img [src]="'http://127.0.0.1:8000/'+ container.image_output"  [alt]="container.code" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="container.image_output">
+                <div class="field">
+                    <label for="code">Code Container</label>
+                    <input type="text" pInputText id="code" [(ngModel)]="container.code" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !container.code}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !container.code">Code is required.</small>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Confirm" icon=" pi pi-check-circle" class="p-button-text" (click)="ConfirmContainer(container)"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteContainerDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="container">Are you sure you want to delete <b>{{container.code}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteContainerDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteContainersDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span>Are you sure you want to delete selected containers?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteContainersDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .img-fluid {
+    max-width: auto;
+    height: auto;
+    max-height: auto;
+    border-radius: 8px;
+  }
+  
